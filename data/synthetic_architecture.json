@@ -1,0 +1,230 @@
+{
+  "nodes": {
+    "Service": [
+      {
+        "id": "c6cfb320-b533-4a11-abbe-e9d4af3d0831",
+        "name": "api-gateway",
+        "language": "Go",
+        "memory_limit": "512MB",
+        "is_idempotent": true
+      },
+      {
+        "id": "f7a01195-b15c-414c-98b7-519919d0b8e3",
+        "name": "user-service",
+        "language": "Java",
+        "memory_limit": "1GB",
+        "is_idempotent": false
+      },
+      {
+        "id": "c7c9634b-bd44-42bf-93fa-a519281fd4cd",
+        "name": "billing-service",
+        "language": "Python",
+        "memory_limit": "2GB",
+        "is_idempotent": true
+      },
+      {
+        "id": "410b287d-3779-4b19-91c3-dae83edd419d",
+        "name": "inventory-service",
+        "language": "Node.js",
+        "memory_limit": "1GB",
+        "is_idempotent": false
+      },
+      {
+        "id": "9714fa30-65cc-40a1-8668-f59dddd5653e",
+        "name": "recommendation-service",
+        "language": "Python",
+        "memory_limit": "4GB",
+        "is_idempotent": true
+      },
+      {
+        "id": "9274ab07-31e3-4f71-97b4-f23c0d4164fc",
+        "name": "notification-service",
+        "language": "Go",
+        "memory_limit": "256MB",
+        "is_idempotent": true
+      }
+    ],
+    "Database": [
+      {
+        "id": "336fef3e-d49e-44e7-8e25-67e5a8243048",
+        "name": "users-db",
+        "type": "PostgreSQL",
+        "sharding_enabled": false
+      },
+      {
+        "id": "b5cd547e-615b-43c0-b61a-0a0132f43d35",
+        "name": "billing-db",
+        "type": "PostgreSQL",
+        "sharding_enabled": true
+      },
+      {
+        "id": "a1ab1506-f5ad-452c-94d0-d926b4019fa9",
+        "name": "inventory-db",
+        "type": "MongoDB",
+        "sharding_enabled": true
+      },
+      {
+        "id": "32787a22-16e3-496e-bff9-4e5d8bd5fa3e",
+        "name": "cache-redis",
+        "type": "Redis",
+        "sharding_enabled": false
+      }
+    ],
+    "MessageBroker": [
+      {
+        "id": "19932697-ddff-4594-b85e-33c2af8b470d",
+        "name": "events-kafka",
+        "type": "Kafka"
+      },
+      {
+        "id": "15211f7d-929f-4cdd-88fe-955080f4bb37",
+        "name": "tasks-rabbitmq",
+        "type": "RabbitMQ"
+      }
+    ],
+    "Team": [
+      {
+        "id": "103a219e-bc2b-4c30-bee2-41016af7c626",
+        "name": "Platform Team",
+        "on_call_phone": "+1-555-0100"
+      },
+      {
+        "id": "b86f09e9-2ad9-4b4b-9c92-b3009cef0707",
+        "name": "Core Services Team",
+        "on_call_phone": "+1-555-0101"
+      },
+      {
+        "id": "c558f345-4374-43fd-b9d1-86a7fd4d55d2",
+        "name": "Finance Team",
+        "on_call_phone": "+1-555-0102"
+      },
+      {
+        "id": "07d71d03-89e6-4b57-b456-e1c80aae4697",
+        "name": "Data Science Team",
+        "on_call_phone": "+1-555-0103"
+      }
+    ]
+  },
+  "edges": {
+    "CALLS": [
+      {
+        "source": "c6cfb320-b533-4a11-abbe-e9d4af3d0831",
+        "target": "f7a01195-b15c-414c-98b7-519919d0b8e3",
+        "protocol": "gRPC"
+      },
+      {
+        "source": "c6cfb320-b533-4a11-abbe-e9d4af3d0831",
+        "target": "c7c9634b-bd44-42bf-93fa-a519281fd4cd",
+        "protocol": "REST"
+      },
+      {
+        "source": "c6cfb320-b533-4a11-abbe-e9d4af3d0831",
+        "target": "410b287d-3779-4b19-91c3-dae83edd419d",
+        "protocol": "REST"
+      },
+      {
+        "source": "f7a01195-b15c-414c-98b7-519919d0b8e3",
+        "target": "9714fa30-65cc-40a1-8668-f59dddd5653e",
+        "protocol": "gRPC"
+      },
+      {
+        "source": "c7c9634b-bd44-42bf-93fa-a519281fd4cd",
+        "target": "9274ab07-31e3-4f71-97b4-f23c0d4164fc",
+        "protocol": "gRPC"
+      }
+    ],
+    "READS_FROM": [
+      {
+        "source": "f7a01195-b15c-414c-98b7-519919d0b8e3",
+        "target": "336fef3e-d49e-44e7-8e25-67e5a8243048"
+      },
+      {
+        "source": "f7a01195-b15c-414c-98b7-519919d0b8e3",
+        "target": "32787a22-16e3-496e-bff9-4e5d8bd5fa3e"
+      },
+      {
+        "source": "c7c9634b-bd44-42bf-93fa-a519281fd4cd",
+        "target": "b5cd547e-615b-43c0-b61a-0a0132f43d35"
+      },
+      {
+        "source": "410b287d-3779-4b19-91c3-dae83edd419d",
+        "target": "a1ab1506-f5ad-452c-94d0-d926b4019fa9"
+      },
+      {
+        "source": "410b287d-3779-4b19-91c3-dae83edd419d",
+        "target": "32787a22-16e3-496e-bff9-4e5d8bd5fa3e"
+      }
+    ],
+    "WRITES_TO": [
+      {
+        "source": "f7a01195-b15c-414c-98b7-519919d0b8e3",
+        "target": "336fef3e-d49e-44e7-8e25-67e5a8243048",
+        "delivery_semantics": "exactly-once"
+      },
+      {
+        "source": "f7a01195-b15c-414c-98b7-519919d0b8e3",
+        "target": "32787a22-16e3-496e-bff9-4e5d8bd5fa3e",
+        "delivery_semantics": "at-least-once"
+      },
+      {
+        "source": "c7c9634b-bd44-42bf-93fa-a519281fd4cd",
+        "target": "b5cd547e-615b-43c0-b61a-0a0132f43d35",
+        "delivery_semantics": "exactly-once"
+      },
+      {
+        "source": "410b287d-3779-4b19-91c3-dae83edd419d",
+        "target": "a1ab1506-f5ad-452c-94d0-d926b4019fa9",
+        "delivery_semantics": "exactly-once"
+      },
+      {
+        "source": "410b287d-3779-4b19-91c3-dae83edd419d",
+        "target": "32787a22-16e3-496e-bff9-4e5d8bd5fa3e",
+        "delivery_semantics": "at-least-once"
+      }
+    ],
+    "PUBLISHES_TO": [
+      {
+        "source": "f7a01195-b15c-414c-98b7-519919d0b8e3",
+        "target": "19932697-ddff-4594-b85e-33c2af8b470d"
+      },
+      {
+        "source": "c7c9634b-bd44-42bf-93fa-a519281fd4cd",
+        "target": "19932697-ddff-4594-b85e-33c2af8b470d"
+      },
+      {
+        "source": "410b287d-3779-4b19-91c3-dae83edd419d",
+        "target": "19932697-ddff-4594-b85e-33c2af8b470d"
+      },
+      {
+        "source": "9274ab07-31e3-4f71-97b4-f23c0d4164fc",
+        "target": "15211f7d-929f-4cdd-88fe-955080f4bb37"
+      }
+    ],
+    "MAINTAINS": [
+      {
+        "source": "103a219e-bc2b-4c30-bee2-41016af7c626",
+        "target": "c6cfb320-b533-4a11-abbe-e9d4af3d0831"
+      },
+      {
+        "source": "b86f09e9-2ad9-4b4b-9c92-b3009cef0707",
+        "target": "f7a01195-b15c-414c-98b7-519919d0b8e3"
+      },
+      {
+        "source": "c558f345-4374-43fd-b9d1-86a7fd4d55d2",
+        "target": "c7c9634b-bd44-42bf-93fa-a519281fd4cd"
+      },
+      {
+        "source": "b86f09e9-2ad9-4b4b-9c92-b3009cef0707",
+        "target": "410b287d-3779-4b19-91c3-dae83edd419d"
+      },
+      {
+        "source": "07d71d03-89e6-4b57-b456-e1c80aae4697",
+        "target": "9714fa30-65cc-40a1-8668-f59dddd5653e"
+      },
+      {
+        "source": "103a219e-bc2b-4c30-bee2-41016af7c626",
+        "target": "9274ab07-31e3-4f71-97b4-f23c0d4164fc"
+      }
+    ]
+  }
+}

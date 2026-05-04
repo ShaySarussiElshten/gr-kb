@@ -11,7 +11,7 @@ This is a complete prototype of a Graph RAG system that uses a Text-to-Cypher ap
 ## Prerequisites
 - Docker and Docker Compose
 - Python 3.10+
-- An OpenAI API Key (for the LLM agent)
+- A Google Gemini API Key (for the LLM agent)
 
 ## Setup Instructions
 
@@ -40,9 +40,9 @@ This is a complete prototype of a Graph RAG system that uses a Text-to-Cypher ap
    *You can verify the data by navigating to http://localhost:7474 (Login: neo4j / password).*
 
 4. **Start the Graph RAG API & Chatbot**:
-   Set your OpenAI API key as an environment variable and build/start the remaining services:
+   Set your Google API key as an environment variable and build/start the remaining services:
    ```bash
-   export OPENAI_API_KEY="your-api-key-here"
+   export GOOGLE_API_KEY="your-api-key-here"
    docker-compose up --build -d backend frontend
    ```
 
@@ -76,10 +76,10 @@ This prototype implements an agentic approach to Graph RAG:
 To elevate this project from a working prototype to a robust, production-ready system, the following best practices have been implemented:
 
 1. **Security & Guardrails**:
-   - **Cypher Injection Prevention**: A strict Python-level regex validator is embedded inside the database tool, blocking any mutating Cypher operations (`CREATE`, `DELETE`, `MERGE`, `SET`, `DROP`, `REMOVE`, `CALL`).
+   - **LLM-Generated Destructive Queries Prevention**: A strict Python-level regex validator is embedded inside the database tool, blocking any mutating Cypher operations (`CREATE`, `DELETE`, `MERGE`, `SET`, `DROP`, `REMOVE`, `CALL`).
    - **Topical Guardrails**: The agent's core system prompt explicitly restricts the domain, ensuring the chatbot gracefully refuses off-topic queries (e.g., general knowledge) to prevent Prompt Injection and irrelevant resource usage.
 2. **Context Window Optimization (Lazy Loading)**: The complete graph schema is **not** injected into every conversational prompt. It is isolated within the `query_graph_database` tool, meaning it only consumes LLM token context when the agent explicitly decides it needs architectural data.
-3. **Resiliency & Performance (Semantic Caching)**: The FastAPI backend implements an `InMemoryCache` for the LLM. Identical or repeated questions are served instantly from the cache, significantly reducing API latency and LLM costs. In a fully scaled environment, this can be seamlessly swapped for a `RedisSemanticCache`.
+3. **Resiliency & Performance (Exact-Match Caching)**: The FastAPI backend implements an `InMemoryCache` for the LLM. Identical or repeated questions are served instantly from the cache, significantly reducing API latency and LLM costs. In a fully scaled environment, this can be seamlessly swapped for a `RedisSemanticCache`.
 4. **Conversational Memory**: The backend parses incoming `chat_history` from the frontend and injects it into the LangChain `MessagesPlaceholder`, transforming the stateless RAG into a stateful, conversational AI Agent capable of resolving pronouns and multi-turn context.
 5. **Asynchronous Non-Blocking Execution**: The entire backend lifecycle (FastAPI -> LangChain Agent -> Neo4j `AsyncGraphDatabase`) is fully asynchronous (`async`/`await`), allowing the system to handle thousands of concurrent queries without blocking threads.
 6. **Configuration & Validation (Fail-Fast)**: System configuration is strictly managed using `pydantic-settings`. Environment variables are validated at startup, guaranteeing a fail-fast boot sequence rather than unexpected runtime crashes.

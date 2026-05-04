@@ -90,3 +90,8 @@ Try asking the chatbot these questions:
 1. *"Which services will be affected if the Redis database goes down?"*
 2. *"Show me the path of a request from the API Gateway to the billing database."*
 3. *"Which team maintains the recommendation service and what is their on-call phone number?"*
+
+## Assumptions & Limitations
+- **Data Volume**: The synthetic dataset is relatively small for demonstration purposes. In a massive enterprise architecture, the LLM-generated Cypher queries might need further optimization (e.g., using explicit Neo4j Full-Text indexes) to avoid expensive graph traversals.
+- **Text-to-Cypher Limitations**: Generating Cypher dynamically via LLM is powerful but can be prone to hallucination. To mitigate this, we rely on a highly rigid `system` prompt inside the `query_graph_database` tool, but complex multi-hop ambiguous questions might occasionally fail to translate perfectly.
+- **Stateless Tooling**: While the chatbot interface has conversational memory, the Neo4j database connection itself is stateless per request. We assume that the architecture graph is mostly read-only for the chatbot's purposes. Mutating operations are strictly blocked by our security guardrails.
